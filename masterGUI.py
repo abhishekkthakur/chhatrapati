@@ -7,7 +7,7 @@ from tkinter import *
 ## Creating a new tkinter window
 master = tk.Tk()
 master.title('Gibbs energy calculator')
-master.geometry('1000x700')
+master.geometry('800x600')             ## First is width
 
 ## Function to calculate the Gibbs energy
 def gibbsCalculate():
@@ -82,24 +82,28 @@ def gibbsCalculate():
         composition.append(tempxB)
         tempxB = tempxB + 0.01
 
-    return g0ElemA, g0ElemB, composition, gmm, gid, gex
+    return g0ElemA, g0ElemB, composition, gmm, gid, gex, L0, L1, L2
     
 def gibbsEqui():
-    g0ElemA, g0ElemB, composition, gmm, gid, gex = gibbsCalculate()
+    g0ElemA, g0ElemB, composition, gmm, gid, gex, L0, L1, L2 = gibbsCalculate()
     T = float(temp.get())
     R = 8.314
     tempxB = 0.5
     ## Calculating the mechanical mixing part at 0.5 composition
-    tempgmm = round(((1 - tempxB) * g0ElemA) + (tempxB * g0ElemB), 3)
-    tk.Label(master, text = str(tempgmm)).grid(row = 8, column = 1)
-    tk.Label(master, text = 'kJ/mol').grid(row = 8, column = 2)
+    tempgmm = round((((1 - tempxB) * g0ElemA) + (tempxB * g0ElemB)) * 0.001, 3)
+    tk.Label(master, text = 'Mechanical contribution = ' + str(tempgmm), font = ('Times 14 bold')).place(x = 2, y = 500)
+    tk.Label(master, text = 'kJ/mol', font = ('Times 14 bold')).place(x = 300, y = 500)
     ## Calculating the ideal part at 0.5 composition
-    tempgid = round(R * T * ((1 - tempxB) * math.log(1 - tempxB) + tempxB * math.log(tempxB)), 3)
-    tk.Label(master, text = str(tempgid)).grid(row = 9, column = 1)
-    tk.Label(master, text = 'kJ/mol').grid(row = 9, column = 2)
+    tempgid = round((R * T * ((1 - tempxB) * math.log(1 - tempxB) + tempxB * math.log(tempxB))) * 0.001, 3)
+    tk.Label(master, text = 'Ideal contribution = ' + str(tempgid), font = ('Times 14 bold')).place(x = 2, y = 530)
+    tk.Label(master, text = 'kJ/mol', font = ('Times 14 bold')).place(x = 240, y = 530)
+    ## Calculating the excess part at 0.5 composition
+    tempgex = round(((1 - tempxB) * tempxB * (L0 + (1 - 2 * tempxB) * L1 + (1 - 2 * tempxB)**2 * L2)) * 0.001, 3)
+    tk.Label(master, text = 'Excess contribution = ' + str(tempgex), font = ('Times 14 bold')).place(x = 2, y = 560)
+    tk.Label(master, text = 'kJ/mol', font = ('Times 14 bold')).place(x = 240, y = 560)
 
 def gibbsMech():
-    g0ElemA, g0ElemB, composition, gmm, gid, gex = gibbsCalculate()
+    g0ElemA, g0ElemB, composition, gmm, gid, gex, L0, L1, L2 = gibbsCalculate()
     T = float(temp.get())
     figure1 = Figure(figsize = (5, 4), dpi = 100)
     plot1 = figure1.add_subplot(1, 1, 1)
@@ -107,10 +111,10 @@ def gibbsMech():
     plot1.set_xlabel('Composition', fontsize = 8)
     plot1.set_ylabel('Gibbs energy (kJ/mol)', fontsize = 8)
     canvas = FigureCanvasTkAgg(figure1, master)
-    canvas.get_tk_widget().grid(row = 10, column = 0)
+    canvas.get_tk_widget().place(x = 290, y = 10)
 
 def gibbsId():
-    g0ElemA, g0ElemB, composition, gmm, gid, gex = gibbsCalculate()
+    g0ElemA, g0ElemB, composition, gmm, gid, gex, L0, L1, L2 = gibbsCalculate()
     T = float(temp.get())
     figure1 = Figure(figsize = (5, 4), dpi = 100)
     plot1 = figure1.add_subplot(1, 1, 1)
@@ -118,10 +122,10 @@ def gibbsId():
     plot1.set_xlabel('Composition', fontsize = 8)
     plot1.set_ylabel('Gibbs energy (kJ/mol)', fontsize = 8)
     canvas = FigureCanvasTkAgg(figure1, master)
-    canvas.get_tk_widget().grid(row = 10, column = 0)
+    canvas.get_tk_widget().place(x = 290, y = 10)
 
 def gibbsEx():
-    g0ElemA, g0ElemB, composition, gmm, gid, gex = gibbsCalculate()
+    g0ElemA, g0ElemB, composition, gmm, gid, gex, L0, L1, L2 = gibbsCalculate()
     T = float(temp.get())
     figure1 = Figure(figsize = (5, 4), dpi = 100)
     plot1 = figure1.add_subplot(1, 1, 1)
@@ -129,10 +133,10 @@ def gibbsEx():
     plot1.set_xlabel('Composition', fontsize = 8)
     plot1.set_ylabel('Gibbs energy (kJ/mol)', fontsize = 8)
     canvas = FigureCanvasTkAgg(figure1, master)
-    canvas.get_tk_widget().grid(row = 10, column = 0)
+    canvas.get_tk_widget().place(x = 290, y = 10)
 
 def gibbsTotal():
-    g0ElemA, g0ElemB, composition, gmm, gid, gex = gibbsCalculate()
+    g0ElemA, g0ElemB, composition, gmm, gid, gex, L0, L1, L2 = gibbsCalculate()
     T = float(temp.get())
     gTotal = [gmm[i] + gid[i] + gex[i] for i in range(len(gmm))]
     figure1 = Figure(figsize = (5, 4), dpi = 100)
@@ -141,54 +145,60 @@ def gibbsTotal():
     plot1.set_xlabel('Composition', fontsize = 8)
     plot1.set_ylabel('Gibbs energy (kJ/mol)', fontsize = 8)
     canvas = FigureCanvasTkAgg(figure1, master)
-    canvas.get_tk_widget().grid(row = 10, column = 0)
+    canvas.get_tk_widget().place(x = 290, y = 10)
 
 def quitButtonFunction():
     master.quit()
     master.destroy()
 
 ## System name
-tk.Label(master, text = 'First element', font = ('Times 14 bold')).grid(row = 0, column = 0)
-elemA = tk.Entry(master)
-elemA.grid(row = 0, column = 1)
+tk.Label(master, text = 'First element', font = ('Times 14 bold')).place(x = 2, y = 100)
+elemA = tk.Entry(master, width = 6, font = ('Times 16 bold'))
+elemA.place(x = 150, y = 100)
 
-tk.Label(master, text = 'Second element', font = ('Times 14 bold')).grid(row = 1, column = 0)
-elemB = tk.Entry(master)
-elemB.grid(row = 1, column = 1)
+tk.Label(master, text = 'Second element', font = ('Times 14 bold')).place(x = 2, y = 140)
+elemB = tk.Entry(master, width = 6, font = ('Times 16 bold'))
+elemB.place(x = 150, y = 140)
 
 ## Temperature
-tk.Label(master, text = 'Temperature (K)', font = ('Times 14 bold')).grid(row = 2, column = 0)
-temp = tk.Entry(master)
-temp.grid(row = 2, column = 1)
+tk.Label(master, text = 'Temperature', font = ('Times 14 bold')).place(x = 2, y = 180)
+temp = tk.Entry(master, width = 6, font = ('Times 16 bold'))
+temp.place(x = 150, y = 180)
+tk.Label(master, text = 'K', font = ('Times 14 bold')).place(x = 230, y = 180)
 
 ## Interaction parameters
-tk.Label(master, text = 'L0 (J/mol)', font = ('Times 14 bold')).grid(row = 3, column = 0)
-interL0 = tk.Entry(master)
-interL0.grid(row = 3, column = 1)
-tk.Label(master, text = 'L1 (J/mol)', font = ('Times 14 bold')).grid(row = 4, column = 0)
-interL1 = tk.Entry(master)
-interL1.grid(row = 4, column = 1)
-tk.Label(master, text = 'L2 (J/mol)', font = ('Times 14 bold')).grid(row = 5, column = 0)
-interL2 = tk.Entry(master)
-interL2.grid(row = 5, column = 1)
+tk.Label(master, text = 'L0', font = ('Times 14 bold')).place(x = 2, y = 220)
+interL0 = tk.Entry(master, width = 6, font = ('Times 16 bold'))
+interL0.place(x = 150, y = 220)
+tk.Label(master, text = 'J/mol', font = ('Times 14 bold')).place(x = 230, y = 220)
 
+tk.Label(master, text = 'L1', font = ('Times 14 bold')).place(x = 2, y = 260)
+interL1 = tk.Entry(master, width = 6, font = ('Times 16 bold'))
+interL1.place(x = 150, y = 260)
+tk.Label(master, text = 'J/mol', font = ('Times 14 bold')).place(x = 230, y = 260)
+
+tk.Label(master, text = 'L2', font = ('Times 14 bold')).place(x = 2, y = 300)
+interL2 = tk.Entry(master, width = 6, font = ('Times 16 bold'))
+interL2.place(x = 150, y = 300)
+tk.Label(master, text = 'J/mol', font = ('Times 14 bold')).place(x = 230, y = 300)
 
 ## Calculate button
-calc = tk.Button(master, text = 'Calculate', bg = 'silver', height = 2, width = 10, font = ('Times 14 bold'), command = gibbsEqui).grid(row = 6, column = 0)
+calc = tk.Button(master, text = 'Calculate', bg = 'silver', height = 2, width = 9, font = ('Times 12 bold'), command = gibbsEqui).place(x = 2, y = 420)
 
 ## Plot buttons
-gmmPlot = tk.Button(master, text = 'Plot\nMech part', bg = 'orange', height = 2, width = 10, font = ('Times 10 bold'), command = gibbsMech).grid(row = 6, column = 1)
-gidPlot = tk.Button(master, text = 'Plot\nIdeal part', bg = 'orange', height = 2, width = 10, font = ('Times 10 bold'), command = gibbsId).grid(row = 6, column = 2)
-gexPlot = tk.Button(master, text = 'Plot\nExcess part', bg = 'orange', height = 2, width = 10, font = ('Times 10 bold'), command = gibbsEx).grid(row = 6, column = 3)
-gTotalPlot = tk.Button(master, text = 'Plot\nTotal', bg = 'orange', height = 2, width = 10, font = ('Times 10 bold'), command = gibbsTotal).grid(row = 6, column = 4)
+gmmPlot = tk.Button(master, text = 'Plot\nMech part', bg = 'orange', height = 2, width = 9, font = ('Times 12 bold'), command = gibbsMech).place(x = 142, y = 420)
+gidPlot = tk.Button(master, text = 'Plot\nIdeal part', bg = 'orange', height = 2, width = 9, font = ('Times 12 bold'), command = gibbsId).place(x = 282, y = 420)
+gexPlot = tk.Button(master, text = 'Plot\nExcess part', bg = 'orange', height = 2, width = 9, font = ('Times 12 bold'), command = gibbsEx).place(x = 422, y = 420)
+gTotalPlot = tk.Button(master, text = 'Plot\nTotal', bg = 'deepskyblue', height = 2, width = 9, font = ('Times 12 bold'), command = gibbsTotal).place(x = 562, y = 420)
 
 ## Quit button
-quitButton = tk.Button(master, text = 'Quit', bg = 'silver', height = 2, width = 10, font = ('Tomes 14 bold'), command = quitButtonFunction).grid(row = 6, column = 5)
+quitButton = tk.Button(master, text = 'Quit', bg = 'silver', height = 2, width = 9, font = ('Times 12 bold'), command = quitButtonFunction).place(x = 702, y = 420)
 
 ## Gibbs energy displayer
-tk.Label(master, text = 'Gibbs energy at equiatomic composition', font = ('Times 12 bold')).grid(row = 7, column = 0)
-tk.Label(master, text = 'G_mm').grid(row = 8, column = 0)
-tk.Label(master, text = 'G_id').grid(row = 9, column = 0)
+##tk.Label(master, text = 'Gibbs energy at equiatomic composition', font = ('Times 12 bold')).place(x = 2, y = 500)
+##tk.Label(master, text = 'G_mm').place(x = 2, y = 540)
+##tk.Label(master, text = 'G_id').place(x = 2, y = 580)
 
 ## Taking it to mainloop
 master.mainloop()
+
