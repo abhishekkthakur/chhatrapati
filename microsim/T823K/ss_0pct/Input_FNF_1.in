@@ -1,0 +1,127 @@
+##Geometrical dimensions of the simulation domain
+DIMENSION = 2;
+MESH_X = 256;
+MESH_Y = 256;
+MESH_Z = 1;
+##Discretization, space and time
+DELTA_X = 4e-10;
+DELTA_Y = 4e-10;
+DELTA_Z = 4e-10;
+DELTA_t = 16e-9;
+##Number of phases and composition
+NUMPHASES = 3;
+NUMCOMPONENTS = 3;
+#Running and saving information
+NTIMESTEPS = 10000000;
+NSMOOTH = 10;
+SAVET = 10000;
+STARTTIME = 0;
+RESTART = 0;
+numworkers = 4;
+## Component and Phase names
+# COMPONENTS = {Al,Cu,B};
+COMPONENTS = {C, Nb, Fe};
+PHASES = {NbC,Austenite,Ferrite};
+##Material properties
+##GAMMA={12, 13, 14, 23, 24...}
+GAMMA = {0.022, 0.022, 0.022};
+# Diffusivity = {Diagonal:0/1, phase, 11,22,33, 12, 13, 23...};
+DIFFUSIVITY = {1, 0, 1e-12, 1e-13};
+DIFFUSIVITY = {1, 1, 1e-12, 1e-13};
+DIFFUSIVITY = {1, 2, 1e-12, 1e-13};
+##Gas constant and molar volume
+R = 8.314;
+V = 10e-6;
+##Elasticity related parameters
+ELASTICITY=0;
+EIGEN_STRAIN = {0, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0};
+EIGEN_STRAIN = {1, 0.01, 0.01, 0.0, 0.0, 0.0, 0.0};
+VOIGT_CUBIC = {0, 270, 187.5, 125.0};
+VOIGT_CUBIC = {1, 270, 187.5, 125.0};
+VOIGT_CUBIC = {2, 270, 187.5, 125.0};
+#VOIGT_CUBIC = {phase, c11, c12, c44};
+#VOIGT_TETRAGONAL = {phase, c11, c12, c13, c33, c44, c66};
+##Boundary conditions
+#0: Free, 1: Neumann, 2: Dirichlet, 3: Periodic, 4: Complex
+#Boundary = {phase, X+, X-, Y+, Y-, Z+, Z-}
+BOUNDARY = {phi, 3, 3, 3, 3, 0, 0};
+BOUNDARY = {mu, 3, 3, 3, 3, 0, 0};
+BOUNDARY = {c, 3, 3, 3, 3, 0, 0};
+BOUNDARY = {T, 3, 3, 3, 3, 0, 0};
+# Boundary = {phi, 1, 1, 0};
+# Boundary = {"u", 3, 3, 2, 2};
+#Boundary_value = {Value X+, Value X-, Value Y+, Value Y-, Value Z+, Value Z-}
+BOUNDARY_VALUE = {phi, 0, 0, 0, 0, 0, 0};
+BOUNDARY_VALUE = {mu, 0, 0, 0, 0, 0, 0};
+BOUNDARY_VALUE = {c, 0, 0, 0, 0, 0, 0};
+BOUNDARY_VALUE = {T, 0, 0, 0, 0, 0, 0};
+##Type of simulation
+ISOTHERMAL = 1;
+#BINARY = 1;
+TERNARY = 1;
+DILUTE = 0;
+T = 823;
+##FILEWRITING and OUTPUTTING TO SCREEN
+## WRITEFORMAT ASCII/BINARY/HDF5(Only for MPI)
+##TRACK_PROGRESS: interval of writing out the progress of the simulation to stdout. 
+WRITEFORMAT = ASCII;
+WRITEHDF5 = 1;
+TRACK_PROGRESS = 10;
+##Model-specific parameters: Grand-potential model
+##Phase-field parameters; epsilon:interface width; it is not the gradient energy coefficient
+epsilon = 16e-10;
+tau = 1.31;
+Tau = {0.28, 0.28, 0.28};
+##Anisotropy functions
+##Anisotropy mode, FUNCTION_ANISOTROPY=0 is isotropic
+Function_anisotropy = 0;
+Anisotropy_type = 4; 
+dab = {0, 0, 0};
+fab = {2, 2, 2};
+#Rotation_matrix = {0, 1, Euler_x(ang), Euler_y(ang), Euler_z(ang)};
+Rotation_matrix = {0, 1, 0, 0, 0};
+##Potential function
+Function_W = 1;
+Gamma_abc = {10};
+#Shifting of domain for infinite domain simulations
+Shift = 0;
+Shiftj = 30;
+#Writing of composition fields along with the chemical potential fields
+Writecomposition = 1;
+#Noise
+Noise_phasefield = 1;
+Amp_Noise_Phase = 0.1;
+##Temperature
+Equilibrium_temperature = 823; 
+Filling_temperature = 823;
+#TEMPGRADY={BASETEMP, DELTAT, DISTANCE, OFFSET, VELOCITY}
+Tempgrady = {1000, 0.1, 10e-6, 0, 320e-6};
+##Function_F
+Function_F = 1;
+A = {0, 932885.618800489, 467949.458394507, -135635.089774402};
+A = {1, 1567165.8331782, 1440171100.13401, -376829.837760764};
+A = {2, 423042.2186, 1436954.788, -115666.7176};
+ceq = {0, 0, 0.4968440558005073, 0.4124236757277225};	## NbC or FCC_A1#2
+ceq = {1, 1, 0.10013774916462839, 8.577133567080684e-09};	## Austenite or FCC_A1#1
+ceq = {2, 2, 0.001274167, 4.4213599992031884e-11};	## Ferrite or FCC_A2#2
+ceq = {0, 2, 0.001274167, 4.4213599992031884e-11};	## Cross terms to calc chem potz. These should be taken from matrix/ferrite/BCC_A2
+ceq = {2, 0, 0.001274167, 4.4213599992031884e-11};
+ceq = {1, 2, 0.001274167, 4.4213599992031884e-11};
+ceq = {2, 1, 0.001274167, 4.4213599992031884e-11};
+cfill = {0, 0, 0.4968440558005073, 0.4124236757277225};	## Same as of ceq because there is no supersaturation
+cfill = {1, 1, 0.10013774916462839, 8.577133567080684e-09};
+cfill = {2, 2, 0.001274167, 4.4213599992031884e-11};	## In matrix we provide some supersaturation so the ppt grow generally give 30% supersaturat
+cfill = {0, 2, 0.001274167, 4.4213599992031884e-11};	## 0:ppt, 2:matrix/ferrite, next is for carbon and last is for niobium
+cfill = {2, 0, 0.001274167, 4.4213599992031884e-11};
+cfill = {1, 2, 0.001274167, 4.4213599992031884e-11};
+cfill = {2, 1, 0.001274167, 4.4213599992031884e-11};
+slopes = {0, 0, -297721.208, 2778.013938299897};	## Slope of NbC
+slopes = {0, 1, 1160583.1336615493, 486502488942.1105};	## Assume it of the matrix/ferrite because they are cross terms
+slopes = {0, 2, 1160583.1336615493, 486502488942.1105};
+slopes = {1, 1, -2558.146061, 7578430828.629165};	## Slope of austenite
+slopes = {1, 2, 1160583.1336615493, 486502488942.1105};
+slopes = {2, 2, 1160583.1336615493, 486502488942.1105};	## Slope of ferrite
+num_thermo_phases = 3;
+tdbfname = alzn_mey.tdb;
+tdb_phases = {FCC_A1#2,FCC_A1, BCC_A2#1};
+phase_map = {FCC_A1#2,FCC_A1, BCC_A2#1};
